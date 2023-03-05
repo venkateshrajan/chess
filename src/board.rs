@@ -64,7 +64,7 @@ impl Board {
         });
         board.cells[60].piece = Some(Piece {
             piece_type: PieceType::King,
-            color: PieceColor::Black,
+            color: PieceColor::White,
         });
 
         // Place Queens
@@ -158,22 +158,29 @@ impl fmt::Display for Board {
             // print new line for each row
             if i%8 == 0 { writeln!(f, "")?; }
 
-            // set color mode
+            // Following link helps with ANSI Escape codes
+            // https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+
+            // set background color
             if cell.color == CellColor::White {
-                write!(f, "\x1b[38;5;22m\x1b[48;5;194m ")?;
+                write!(f, "\x1b[48;5;255m ")?;
             } else {
-                write!(f, "\x1b[38;5;194m\x1b[48;5;22m ")?;
+                write!(f, "\x1b[48;5;248m ")?;
             }
 
+
             if let Some(piece) = cell.piece  {
+                // set forground color
+                write!(f, "\x1b[38;5;232m")?;
+
                 write!(f, "{}", 
                        match piece.piece_type {
-                           PieceType::King => if piece.color == PieceColor::White {"K"} else {"k"},
-                           PieceType::Queen => if piece.color == PieceColor::White {"Q"} else {"q"},
-                           PieceType::Rook => if piece.color == PieceColor::White {"R"} else {"r"},
-                           PieceType::Bishop => if piece.color == PieceColor::White {"B"} else {"b"},
-                           PieceType::Knight => if piece.color == PieceColor::White {"N"} else {"n"},
-                           PieceType::Pawn => if piece.color == PieceColor::White {"P"} else {"p"},
+                           PieceType::King => if piece.color == PieceColor::White { "\u{2654}" } else { "\u{265A}" },
+                           PieceType::Queen => if piece.color == PieceColor::White { "\u{2655}" } else { "\u{265B}" },
+                           PieceType::Rook => if piece.color == PieceColor::White { "\u{2656}" } else { "\u{265C}" },
+                           PieceType::Bishop => if piece.color == PieceColor::White { "\u{2657}" } else { "\u{265D}" },
+                           PieceType::Knight => if piece.color == PieceColor::White { "\u{2658}" } else { "\u{265E}" },
+                           PieceType::Pawn => if piece.color == PieceColor::White { "\u{2659}" } else { "\u{265F}" },
                        }
                 )?;
             } else {

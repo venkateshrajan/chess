@@ -27,9 +27,15 @@ enum CellColor {
 }
 
 #[derive(Copy, Clone)]
-struct BoardCell {
+pub struct BoardCell {
     color: CellColor,
     piece: Option<Piece>,
+}
+
+impl Default for BoardCell {
+    fn default() -> Self {
+        BoardCell { color: CellColor::White, piece: None}
+    }
 }
 
 pub struct Board {
@@ -39,7 +45,7 @@ pub struct Board {
 impl Board {
     pub fn new() -> Self {
         let mut board = Board {
-           cells: [BoardCell { color: CellColor::White, piece: None}; 64]
+           cells: [Default::default(); 64],
         };
 
         for (i, cell) in board.cells.iter_mut().enumerate() {
@@ -148,6 +154,40 @@ impl Board {
         }
 
         board
+    }
+
+    pub fn _get(&self, pos: usize) -> Result<&BoardCell, String> {
+        let valid_pos = match pos {
+            _ if pos >= 64 => return Err(String::from("Invalid index {pos}")),
+            validated => validated,
+        };
+
+        Ok(&self.cells[valid_pos])
+    }
+
+    pub fn _get_mut(&mut self, pos: usize) -> Result<&mut BoardCell, String> {
+        let valid_pos = match pos {
+            _ if pos >= 64 => return Err(String::from("Invalid index {pos}")),
+            validated => validated,
+        };
+
+        Ok(&mut self.cells[valid_pos])
+    }
+    
+    pub fn make_move(&mut self, from: usize, to: usize) -> Result<(), String> {
+        let valid_from = match from {
+            _ if from >= 64 => return Err(String::from("Invalid from index {from}")),
+            validated => validated,
+        };
+        let valid_to = match to {
+            _ if to >= 64 => return Err(String::from("Invalid to index {to}")),
+            validated => validated,
+        };
+
+        self.cells[valid_to].piece = self.cells[valid_from].piece;
+        self.cells[valid_from].piece = None;
+
+        Ok(())
     }
 }
 

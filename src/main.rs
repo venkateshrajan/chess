@@ -4,6 +4,6 @@ mod engine;
 use engine::*;
 
 fn main() {
-    let engine = Game::new();
+    let mut engine = Game::new();
     engine.game_loop();
 }

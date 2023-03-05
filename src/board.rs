@@ -154,11 +154,9 @@ impl Board {
 use std::fmt;
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "\x1b[38;5;34m")?;
         for c in 65..73 {
             write!(f, " {} ", char::from_u32(c).unwrap())?;
         }
-        write!(f, "\x1b[0m")?;
 
         for (i, cell) in self.cells.iter().enumerate() {
             // print new line for each row

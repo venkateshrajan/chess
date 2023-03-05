@@ -21,10 +21,13 @@ impl Game {
         }
     }
 
-    pub fn gameLoop(&self) {
-        println!("{}", self.board);
+    pub fn game_loop(&self) {
+        while !self.is_game_over() {
+            println!("{}", self.board);
+        }
     }
 
-    fn isGameOver() {
+    fn is_game_over(&self) -> bool {
+        return false;
     }
 }

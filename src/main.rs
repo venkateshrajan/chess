@@ -5,5 +5,5 @@ use engine::*;
 
 fn main() {
     let engine = Game::new();
-    engine.gameLoop();
+    engine.game_loop();
 }

@@ -57,6 +57,25 @@ impl Board {
                 }
             }
         }
+        // Place Kings
+        board.cells[4].piece = Some(Piece {
+            piece_type: PieceType::King,
+            color: PieceColor::Black,
+        });
+        board.cells[60].piece = Some(Piece {
+            piece_type: PieceType::King,
+            color: PieceColor::Black,
+        });
+
+        // Place Queens
+        board.cells[3].piece = Some(Piece {
+            piece_type: PieceType::Queen,
+            color: PieceColor::Black,
+        });
+        board.cells[59].piece = Some(Piece {
+            piece_type: PieceType::Queen,
+            color: PieceColor::White,
+        });
 
         // Place Rooks
         board.cells[0].piece = Some(Piece {
@@ -75,6 +94,58 @@ impl Board {
             piece_type: PieceType::Rook,
             color: PieceColor::White,
         });
+
+        // Place Bishops
+        board.cells[2].piece = Some(Piece {
+            piece_type: PieceType::Bishop,
+            color: PieceColor::Black,
+        });
+        board.cells[5].piece = Some(Piece {
+            piece_type: PieceType::Bishop,
+            color: PieceColor::Black,
+        });
+        board.cells[58].piece = Some(Piece {
+            piece_type: PieceType::Bishop,
+            color: PieceColor::White,
+        });
+        board.cells[61].piece = Some(Piece {
+            piece_type: PieceType::Bishop,
+            color: PieceColor::White,
+        });
+
+        // Place Knights
+        board.cells[1].piece = Some(Piece {
+            piece_type: PieceType::Knight,
+            color: PieceColor::Black,
+        });
+        board.cells[6].piece = Some(Piece {
+            piece_type: PieceType::Knight,
+            color: PieceColor::Black,
+        });
+        board.cells[57].piece = Some(Piece {
+            piece_type: PieceType::Knight,
+            color: PieceColor::White,
+        });
+        board.cells[62].piece = Some(Piece {
+            piece_type: PieceType::Knight,
+            color: PieceColor::White,
+        });
+        
+        // Place Pawns
+        // Place black Pawns
+        for i in 8..16 {
+            board.cells[i].piece = Some(Piece {
+                piece_type: PieceType::Pawn,
+                color: PieceColor::Black,
+            });
+        }
+        // Place black Pawns
+        for i in 48..56 {
+            board.cells[i].piece = Some(Piece {
+                piece_type: PieceType::Pawn,
+                color: PieceColor::White,
+            });
+        }
 
         board
     }
@@ -112,6 +183,8 @@ impl fmt::Display for Board {
             // end color mode
             write!(f, " \x1b[0m")?;
         }
+        writeln!(f, "")?;
+
         fmt::Result::Ok(())
     }
 }

@@ -154,9 +154,21 @@ impl Board {
 use std::fmt;
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "\x1b[38;5;34m")?;
+        for c in 65..73 {
+            write!(f, " {} ", char::from_u32(c).unwrap())?;
+        }
+        write!(f, "\x1b[0m")?;
+
         for (i, cell) in self.cells.iter().enumerate() {
             // print new line for each row
-            if i%8 == 0 { writeln!(f, "")?; }
+            if i%8 == 0 { 
+                if i < 8 {
+                    writeln!(f, "")?; 
+                } else {
+                    writeln!(f, " {}", 8-(i/8)+1)?; 
+                }
+            }
 
             // Following link helps with ANSI Escape codes
             // https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
@@ -173,6 +185,8 @@ impl fmt::Display for Board {
                 // set forground color
                 write!(f, "\x1b[38;5;232m")?;
 
+                // If you need more information about the following unicode characters
+                // https://en.wikipedia.org/wiki/Chess_symbols_in_Unicode
                 write!(f, "{}", 
                        match piece.piece_type {
                            PieceType::King => if piece.color == PieceColor::White { "\u{2654}" } else { "\u{265A}" },
@@ -190,7 +204,7 @@ impl fmt::Display for Board {
             // end color mode
             write!(f, " \x1b[0m")?;
         }
-        writeln!(f, "")?;
+        writeln!(f, " 1")?; 
 
         fmt::Result::Ok(())
     }

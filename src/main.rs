@@ -1,8 +1,9 @@
-pub mod board;
+mod board;
+mod engine;
 
-use board::*;
+use engine::*;
 
 fn main() {
-    let b = Board::new(); 
-    println!("{}", b);
+    let engine = Game::new();
+    engine.gameLoop();
 }

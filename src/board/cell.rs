@@ -28,7 +28,7 @@ impl CellColor  {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct BoardCell {
     pub color: CellColor,
     pub piece: Option<Piece>,
@@ -70,6 +70,14 @@ impl Display for BoardCell {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn default_cell() {
+        assert_eq!(
+            <BoardCell as Default>::default(),
+            BoardCell {color: CellColor::White, piece: None}
+        );
+    }
 
     #[test]
     fn alternate_colors_on_row() {

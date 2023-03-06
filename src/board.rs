@@ -4,6 +4,7 @@ mod piece;
 use cell::*;
 use piece::*;
 
+#[derive(Debug, PartialEq)]
 pub struct Board {
     cells: [BoardCell; 64]
 }
@@ -35,15 +36,20 @@ impl Board {
                 }, 
                 _ if c.is_alphabetic() => {
                     board.cells[idx].color = CellColor::from_index(idx).unwrap();
-                    board.cells[idx].piece = Piece::from_fen_char(c);
+                    board.cells[idx].piece = match Piece::from_fen_char(c) {
+                        Some(x) => Some(x),
+                        None => return Err(format!("Invalid fen char {}", c)),
+                    };
                     idx += 1;
                 }
                 '/' => {
                     if idx%8 != 0 { return Err(format!("Invalid fen string {}", fen)); }
                 },
-                _ => return Err(format!("Invalid fern char: {c}")),
+                _ => return Err(format!("Invalid fen char {}", c)),
             };
         }
+
+        if idx != 64 { return Err(format!("Invalid fen string {}", fen)); }
 
         Ok(board)
     }
@@ -92,29 +98,130 @@ impl fmt::Display for Board {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn new_board_creation() {
-        unimplemented!();
+        let mut board = Board {
+            cells: [Default::default(); 64],
+        };
+
+        for (i, cell) in board.cells.iter_mut().enumerate() {
+            cell.color = CellColor::from_index(i).unwrap();
+        }
+
+        // Place Kings
+        board.cells[4].piece = Piece::from_fen_char('k');
+        board.cells[60].piece = Piece::from_fen_char('K');
+
+        // Place Queens
+        board.cells[3].piece = Piece::from_fen_char('q');
+        board.cells[59].piece = Piece::from_fen_char('Q');
+
+        // Place Rooks
+        board.cells[0].piece = Piece::from_fen_char('r');
+        board.cells[7].piece = Piece::from_fen_char('r');
+        board.cells[56].piece = Piece::from_fen_char('R');
+        board.cells[63].piece = Piece::from_fen_char('R');
+
+        // Place Bishops
+        board.cells[2].piece = Piece::from_fen_char('b');
+        board.cells[5].piece = Piece::from_fen_char('b');
+        board.cells[58].piece = Piece::from_fen_char('B');
+        board.cells[61].piece = Piece::from_fen_char('B');
+
+        // Place Knights
+        board.cells[1].piece = Piece::from_fen_char('n');
+        board.cells[6].piece = Piece::from_fen_char('n');
+        board.cells[57].piece = Piece::from_fen_char('N');
+        board.cells[62].piece = Piece::from_fen_char('N');
+        
+        // Place Pawns
+        // Place black Pawns
+        for i in 8..16 {
+            board.cells[i].piece = Piece::from_fen_char('p');
+        }
+        // Place black Pawns
+        for i in 48..56 {
+            board.cells[i].piece = Piece::from_fen_char('P');
+        }
+
+        assert_eq!(board, Board::new());
     }
 
     #[test]
     fn creation_of_board_from_valid_fen_string() {
-        unimplemented!();
+        // Thanks to http://bernd.bplaced.net/fengenerator/fengenerator.html
+        let mut board = Board {
+            cells: [Default::default(); 64],
+        };
+
+        for (i, cell) in board.cells.iter_mut().enumerate() {
+            cell.color = CellColor::from_index(i).unwrap();
+        }
+
+        board.cells[3].piece = Piece::from_fen_char('Q');
+        board.cells[6].piece = Piece::from_fen_char('B');
+        board.cells[17].piece = Piece::from_fen_char('R');
+        board.cells[23].piece = Piece::from_fen_char('P');
+        board.cells[43].piece = Piece::from_fen_char('P');
+        board.cells[44].piece = Piece::from_fen_char('k');
+        board.cells[46].piece = Piece::from_fen_char('K');
+        board.cells[48].piece = Piece::from_fen_char('r');
+
+        assert_eq!(board, Board::from_fen("3Q2B1/8/1R5P/8/8/3Pk1K1/r7/8").unwrap());
     }
 
     #[test]
-    fn creation_of_board_from_invalid_fen_string() {
-        unimplemented!();
+    #[should_panic(expected = "Invalid fen string")]
+    fn creation_of_board_from_invalid_fen_string1() {
+        Board::from_fen("3Q2B1/8/1R5P/8/8/3Pk1K1/r6/8").unwrap();
     }
 
     #[test]
-    fn creation_of_board_from_invalid_fen_char() {
-        unimplemented!();
+    #[should_panic(expected = "Invalid fen string")]
+    fn creation_of_board_from_invalid_fen_string2() {
+        Board::from_fen("3Q2B1/8/1R5P/8/8/3Pk1K1/r7/7").unwrap();
     }
 
     #[test]
-    fn make_move() {
-        unimplemented!();
+    #[should_panic(expected = "Invalid fen string")]
+    fn creation_of_board_from_invalid_fen_string3() {
+        Board::from_fen("3Q2B1/8/1R5/8/8/3Pk1K1/r7/8").unwrap();
+    }
+
+    #[test]
+    #[should_panic(expected = "Invalid fen char")]
+    fn creation_of_board_from_invalid_fen_char1() {
+        Board::from_fen("3Q2B1/8/1R5T/8/8/3Pk1K1/r7/8").unwrap();
+    }
+
+    #[test]
+    #[should_panic(expected = "Invalid fen char")]
+    fn creation_of_board_from_invalid_fen_char2() {
+        Board::from_fen("3Q2B1/8/1R5P?8/8/3Pk1K1/r7/8").unwrap();
+    }
+
+    #[test]
+    fn make_move_with_valid_indices() {
+        let mut board = Board::from_fen("3Q2B1/8/1R5P/8/8/3Pk1K1/r7/8").unwrap();
+        board.make_move(44, 36).unwrap();
+
+        assert_eq!(board.cells[44].piece, None);
+        assert_eq!(board.cells[36].piece, Piece::from_fen_char('k'));
+    }
+
+    #[test]
+    #[should_panic(expected = "Invalid from index")]
+    fn make_move_with_invalid_from_index() {
+        let mut board = Board::from_fen("3Q2B1/8/1R5P/8/8/3Pk1K1/r7/8").unwrap();
+        board.make_move(64, 36).unwrap();
+    }
+
+    #[test]
+    #[should_panic(expected = "Invalid to index")]
+    fn make_move_with_invalid_to_index() {
+        let mut board = Board::from_fen("3Q2B1/8/1R5P/8/8/3Pk1K1/r7/8").unwrap();
+        board.make_move(44, 66).unwrap();
     }
 }

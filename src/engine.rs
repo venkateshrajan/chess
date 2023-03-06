@@ -1,3 +1,5 @@
+use std::io::{stdout, Write};
+
 use crate::board::*;
 
 struct Move {
@@ -68,7 +70,11 @@ impl Strategy for HumanStrategy {
 
         let mut user_input = String::new();
         loop {
-            println!("Type here:");
+            print!("Type here:");
+            if let Err(e) = stdout().flush() {
+                panic!("Unable to flush the standard output. Error {:?}", e);
+            }
+
             if let Err(e) = std::io::stdin().read_line(&mut user_input) {
                 panic!("Unable to read input. Error {:?}", e);
             }

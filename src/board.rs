@@ -20,10 +20,50 @@ struct Piece {
     color: PieceColor,
 }
 
+impl Piece {
+    fn from_fen_char(c: char) -> Option<Self> {
+        match c {
+            'K' => Some(Self { piece_type: PieceType::King, color: PieceColor::White }),
+            'k' => Some(Self { piece_type: PieceType::King, color: PieceColor::Black }),
+            'Q' => Some(Self { piece_type: PieceType::Queen, color: PieceColor::White }),
+            'q' => Some(Self { piece_type: PieceType::Queen, color: PieceColor::Black }),
+            'R' => Some(Self { piece_type: PieceType::Rook, color: PieceColor::White }),
+            'r' => Some(Self { piece_type: PieceType::Rook, color: PieceColor::Black }),
+            'B' => Some(Self { piece_type: PieceType::Bishop, color: PieceColor::White }),
+            'b' => Some(Self { piece_type: PieceType::Bishop, color: PieceColor::Black }),
+            'N' => Some(Self { piece_type: PieceType::Knight, color: PieceColor::White }),
+            'n' => Some(Self { piece_type: PieceType::Knight, color: PieceColor::Black }),
+            'P' => Some(Self { piece_type: PieceType::Pawn, color: PieceColor::White }),
+            'p' => Some(Self { piece_type: PieceType::Pawn, color: PieceColor::Black }),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Copy, Clone, PartialEq)]
 enum CellColor {
     White,
     Black,
+}
+
+impl CellColor  {
+    fn from_index(idx: usize) -> Option<CellColor> {
+        if idx > 63 { return None; }
+
+        if idx%2 == 0 {
+            if (idx/8)%2==0 { 
+                return Some(CellColor::White);
+            } else {
+                return Some(CellColor::Black);
+            }
+        } else { 
+            if (idx/8)%2==0 { 
+                return Some(CellColor::Black);
+            } else {
+                return Some(CellColor::White);
+            }
+        }
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -44,136 +84,44 @@ pub struct Board {
 
 impl Board {
     pub fn new() -> Self {
-        let mut board = Board {
+        if let Ok(board) = Self::from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
+            return board;
+        }
+
+        Self {
+            cells: [Default::default(); 64],
+        }
+    }
+
+    pub fn from_fen(fen: &str) -> Result<Self, String> {
+        let mut board = Self {
            cells: [Default::default(); 64],
         };
 
-        for (i, cell) in board.cells.iter_mut().enumerate() {
-            if i%2 == 0 {
-                if (i/8)%2==0 { 
-                    cell.color = CellColor::White;
-                } else {
-                    cell.color = CellColor::Black;
+        let mut idx: usize = 0;
+        for c in fen.chars() {
+            match c {
+                _ if c.is_numeric() => {
+                    for i in idx..idx+(c.to_digit(10).unwrap() as usize) {
+                        board.cells[i].color = CellColor::from_index(i).unwrap();
+                        idx += 1;
+                    }
+                }, 
+                _ if c.is_alphabetic() => {
+                    board.cells[idx].color = CellColor::from_index(idx).unwrap();
+                    board.cells[idx].piece = Piece::from_fen_char(c);
+                    idx += 1;
                 }
-            } else { 
-                if (i/8)%2==0 { 
-                    cell.color = CellColor::Black;
-                } else {
-                    cell.color = CellColor::White;
-                }
-            }
-        }
-        // Place Kings
-        board.cells[4].piece = Some(Piece {
-            piece_type: PieceType::King,
-            color: PieceColor::Black,
-        });
-        board.cells[60].piece = Some(Piece {
-            piece_type: PieceType::King,
-            color: PieceColor::White,
-        });
-
-        // Place Queens
-        board.cells[3].piece = Some(Piece {
-            piece_type: PieceType::Queen,
-            color: PieceColor::Black,
-        });
-        board.cells[59].piece = Some(Piece {
-            piece_type: PieceType::Queen,
-            color: PieceColor::White,
-        });
-
-        // Place Rooks
-        board.cells[0].piece = Some(Piece {
-            piece_type: PieceType::Rook,
-            color: PieceColor::Black,
-        });
-        board.cells[7].piece = Some(Piece {
-            piece_type: PieceType::Rook,
-            color: PieceColor::Black,
-        });
-        board.cells[56].piece = Some(Piece {
-            piece_type: PieceType::Rook,
-            color: PieceColor::White,
-        });
-        board.cells[63].piece = Some(Piece {
-            piece_type: PieceType::Rook,
-            color: PieceColor::White,
-        });
-
-        // Place Bishops
-        board.cells[2].piece = Some(Piece {
-            piece_type: PieceType::Bishop,
-            color: PieceColor::Black,
-        });
-        board.cells[5].piece = Some(Piece {
-            piece_type: PieceType::Bishop,
-            color: PieceColor::Black,
-        });
-        board.cells[58].piece = Some(Piece {
-            piece_type: PieceType::Bishop,
-            color: PieceColor::White,
-        });
-        board.cells[61].piece = Some(Piece {
-            piece_type: PieceType::Bishop,
-            color: PieceColor::White,
-        });
-
-        // Place Knights
-        board.cells[1].piece = Some(Piece {
-            piece_type: PieceType::Knight,
-            color: PieceColor::Black,
-        });
-        board.cells[6].piece = Some(Piece {
-            piece_type: PieceType::Knight,
-            color: PieceColor::Black,
-        });
-        board.cells[57].piece = Some(Piece {
-            piece_type: PieceType::Knight,
-            color: PieceColor::White,
-        });
-        board.cells[62].piece = Some(Piece {
-            piece_type: PieceType::Knight,
-            color: PieceColor::White,
-        });
-        
-        // Place Pawns
-        // Place black Pawns
-        for i in 8..16 {
-            board.cells[i].piece = Some(Piece {
-                piece_type: PieceType::Pawn,
-                color: PieceColor::Black,
-            });
-        }
-        // Place black Pawns
-        for i in 48..56 {
-            board.cells[i].piece = Some(Piece {
-                piece_type: PieceType::Pawn,
-                color: PieceColor::White,
-            });
+                '/' => {
+                    if idx%8 != 0 { return Err(format!("Invalid fen string {}", fen)); }
+                },
+                _ => return Err(format!("Invalid fern char: {c}")),
+            };
         }
 
-        board
+        Ok(board)
     }
 
-    pub fn _get(&self, pos: usize) -> Result<&BoardCell, String> {
-        let valid_pos = match pos {
-            _ if pos >= 64 => return Err(String::from("Invalid index {pos}")),
-            validated => validated,
-        };
-
-        Ok(&self.cells[valid_pos])
-    }
-
-    pub fn _get_mut(&mut self, pos: usize) -> Result<&mut BoardCell, String> {
-        let valid_pos = match pos {
-            _ if pos >= 64 => return Err(String::from("Invalid index {pos}")),
-            validated => validated,
-        };
-
-        Ok(&mut self.cells[valid_pos])
-    }
-    
     pub fn make_move(&mut self, from: usize, to: usize) -> Result<(), String> {
         let valid_from = match from {
             _ if from >= 64 => return Err(String::from("Invalid from index {from}")),

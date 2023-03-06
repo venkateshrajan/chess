@@ -1,44 +1,6 @@
-#[derive(Copy, Clone)]
-enum PieceType {
-    King,
-    Queen,
-    Rook,
-    Bishop,
-    Knight,
-    Pawn,
-}
+mod piece;
 
-#[derive(Copy, Clone, PartialEq)]
-enum PieceColor {
-    White,
-    Black,
-}
-
-#[derive(Copy, Clone)]
-struct Piece {
-    piece_type: PieceType,
-    color: PieceColor,
-}
-
-impl Piece {
-    fn from_fen_char(c: char) -> Option<Self> {
-        match c {
-            'K' => Some(Self { piece_type: PieceType::King, color: PieceColor::White }),
-            'k' => Some(Self { piece_type: PieceType::King, color: PieceColor::Black }),
-            'Q' => Some(Self { piece_type: PieceType::Queen, color: PieceColor::White }),
-            'q' => Some(Self { piece_type: PieceType::Queen, color: PieceColor::Black }),
-            'R' => Some(Self { piece_type: PieceType::Rook, color: PieceColor::White }),
-            'r' => Some(Self { piece_type: PieceType::Rook, color: PieceColor::Black }),
-            'B' => Some(Self { piece_type: PieceType::Bishop, color: PieceColor::White }),
-            'b' => Some(Self { piece_type: PieceType::Bishop, color: PieceColor::Black }),
-            'N' => Some(Self { piece_type: PieceType::Knight, color: PieceColor::White }),
-            'n' => Some(Self { piece_type: PieceType::Knight, color: PieceColor::Black }),
-            'P' => Some(Self { piece_type: PieceType::Pawn, color: PieceColor::White }),
-            'p' => Some(Self { piece_type: PieceType::Pawn, color: PieceColor::Black }),
-            _ => None,
-        }
-    }
-}
+use piece::*;
 
 #[derive(Copy, Clone, PartialEq)]
 enum CellColor {
@@ -173,16 +135,7 @@ impl fmt::Display for Board {
 
                 // If you need more information about the following unicode characters
                 // https://en.wikipedia.org/wiki/Chess_symbols_in_Unicode
-                write!(f, "{}", 
-                       match piece.piece_type {
-                           PieceType::King => if piece.color == PieceColor::White { "\u{2654}" } else { "\u{265A}" },
-                           PieceType::Queen => if piece.color == PieceColor::White { "\u{2655}" } else { "\u{265B}" },
-                           PieceType::Rook => if piece.color == PieceColor::White { "\u{2656}" } else { "\u{265C}" },
-                           PieceType::Bishop => if piece.color == PieceColor::White { "\u{2657}" } else { "\u{265D}" },
-                           PieceType::Knight => if piece.color == PieceColor::White { "\u{2658}" } else { "\u{265E}" },
-                           PieceType::Pawn => if piece.color == PieceColor::White { "\u{2659}" } else { "\u{265F}" },
-                       }
-                )?;
+                write!(f, "{}", piece)?;
             } else {
                 write!(f, " ")?;
             }

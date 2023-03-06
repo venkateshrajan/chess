@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum PieceType {
+enum PieceType {
     King,
     Queen,
     Rook,
@@ -11,7 +11,7 @@ pub enum PieceType {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum PieceColor {
+enum PieceColor {
     White,
     Black,
 }
@@ -66,7 +66,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn from_fen_char() {
+    fn pieces_from_supported_fen_char() {
         let fen_chars = vec!['K', 'k', 'Q', 'q', 'R', 'r', 'B', 'b', 'N', 'n', 'P', 'p'];
         let res_pieces = vec![
             Piece { piece_type: PieceType::King, color: PieceColor::White },
@@ -86,5 +86,10 @@ mod tests {
         for i in 0..12 {
             assert_eq!(Piece::from_fen_char(fen_chars[i]).unwrap(), res_pieces[i]);
         }
+    }
+
+    #[test]
+    fn piece_from_unsupported_fen_char() {
+        assert_eq!(Piece::from_fen_char('A'), None);
     }
 }

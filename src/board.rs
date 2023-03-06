@@ -1,44 +1,8 @@
+mod cell;
 mod piece;
 
+use cell::*;
 use piece::*;
-
-#[derive(Copy, Clone, PartialEq)]
-enum CellColor {
-    White,
-    Black,
-}
-
-impl CellColor  {
-    fn from_index(idx: usize) -> Option<CellColor> {
-        if idx > 63 { return None; }
-
-        if idx%2 == 0 {
-            if (idx/8)%2==0 { 
-                return Some(CellColor::White);
-            } else {
-                return Some(CellColor::Black);
-            }
-        } else { 
-            if (idx/8)%2==0 { 
-                return Some(CellColor::Black);
-            } else {
-                return Some(CellColor::White);
-            }
-        }
-    }
-}
-
-#[derive(Copy, Clone)]
-pub struct BoardCell {
-    color: CellColor,
-    piece: Option<Piece>,
-}
-
-impl Default for BoardCell {
-    fn default() -> Self {
-        BoardCell { color: CellColor::White, piece: None}
-    }
-}
 
 pub struct Board {
     cells: [BoardCell; 64]
@@ -117,34 +81,40 @@ impl fmt::Display for Board {
                     writeln!(f, " {}", 8-(i/8)+1)?; 
                 }
             }
-
-            // Following link helps with ANSI Escape codes
-            // https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
-
-            // set background color
-            if cell.color == CellColor::White {
-                write!(f, "\x1b[48;5;255m ")?;
-            } else {
-                write!(f, "\x1b[48;5;248m ")?;
-            }
-
-
-            if let Some(piece) = cell.piece  {
-                // set forground color
-                write!(f, "\x1b[38;5;232m")?;
-
-                // If you need more information about the following unicode characters
-                // https://en.wikipedia.org/wiki/Chess_symbols_in_Unicode
-                write!(f, "{}", piece)?;
-            } else {
-                write!(f, " ")?;
-            }
-
-            // end color mode
-            write!(f, " \x1b[0m")?;
+            write!(f, "{}", cell)?;
         }
         writeln!(f, " 1")?; 
 
         fmt::Result::Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_board_creation() {
+        unimplemented!();
+    }
+
+    #[test]
+    fn creation_of_board_from_valid_fen_string() {
+        unimplemented!();
+    }
+
+    #[test]
+    fn creation_of_board_from_invalid_fen_string() {
+        unimplemented!();
+    }
+
+    #[test]
+    fn creation_of_board_from_invalid_fen_char() {
+        unimplemented!();
+    }
+
+    #[test]
+    fn make_move() {
+        unimplemented!();
     }
 }

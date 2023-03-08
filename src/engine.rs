@@ -1,15 +1,20 @@
 use crate::strategy::HumanStrategy;
 use crate::board::*;
 use crate::player::*;
+use crate::ui::*;
 
-pub struct Engine<'a> {
+pub trait Engine<'a> {
+    ui: &'a dyn UI;
+}
+
+pub struct ConsoleEngine<'a> {
     p1: Player<'a>,
     p2: Player<'a>,
     board: Board,
     turn: bool,
 }
 
-impl<'a> Engine<'a> {
+impl<'a> ConsoleEngine<'a> {
     pub fn new() -> Self {
         Self {
             p1: Player { color: true, strategy: &HumanStrategy {} },
@@ -37,5 +42,9 @@ impl<'a> Engine<'a> {
 
     fn is_game_over(&self) -> bool {
         return false;
+    }
+
+    fn is_valid_move(&self) -> bool {
+        return true;
     }
 }

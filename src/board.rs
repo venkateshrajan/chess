@@ -1,12 +1,12 @@
-mod cell;
-mod piece;
+pub mod cell;
+pub mod piece;
 
 use cell::*;
 use piece::*;
 
 #[derive(Debug, PartialEq)]
 pub struct Board {
-    cells: [BoardCell; 64]
+    pub cells: [BoardCell; 64]
 }
 
 impl Board {

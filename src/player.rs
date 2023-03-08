@@ -4,7 +4,6 @@ use crate::board::*;
 pub struct Player<'a> {
     pub color: bool,
     pub strategy: &'a dyn Strategy,
-    // user_interface: &'a dyn UI,
 }
 
 impl<'a> Player<'a> {

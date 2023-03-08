@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-enum PieceType {
+pub enum PieceType {
     King,
     Queen,
     Rook,
@@ -11,15 +11,15 @@ enum PieceType {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-enum PieceColor {
+pub enum PieceColor {
     White,
     Black,
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Piece {
-    piece_type: PieceType,
-    color: PieceColor,
+    pub piece_type: PieceType,
+    pub color: PieceColor,
 }
 
 impl Piece {

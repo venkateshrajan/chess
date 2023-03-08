@@ -10,9 +10,7 @@ pub trait Strategy {
     fn next_move(&self, board: &Board) -> Move;
 }
 
-pub struct HumanStrategy {
-    // user_interface: &'a dyn UI,
-}
+pub struct HumanStrategy {}
 
 impl HumanStrategy {
     fn parse_move(&self, user_input: &str) -> Result<Move, String> {

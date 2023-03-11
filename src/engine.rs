@@ -3,8 +3,7 @@ use crate::board::*;
 use crate::player::*;
 use crate::ui::*;
 
-pub trait Engine<'a> {
-    ui: &'a dyn UI;
+pub trait Engine {
 }
 
 pub struct ConsoleEngine<'a> {
@@ -12,6 +11,7 @@ pub struct ConsoleEngine<'a> {
     p2: Player<'a>,
     board: Board,
     turn: bool,
+    ui: &'a dyn UI,
 }
 
 impl<'a> ConsoleEngine<'a> {
@@ -21,11 +21,13 @@ impl<'a> ConsoleEngine<'a> {
             p2: Player { color: false, strategy: &HumanStrategy {} },
             board: Board::new(),
             turn: true,
+            ui: &ConsoleUI {},
         }
     }
 
     pub fn game_loop(&mut self) {
         while !self.is_game_over() {
+            self.ui.display_board(&self.board);
             let curr_move = if self.turn {
                 self.p1.next_move(&self.board)
             } else {

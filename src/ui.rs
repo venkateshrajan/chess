@@ -9,7 +9,7 @@ pub trait UI {
     fn show_winner(&self, winner: bool);
 }
 
-struct ConsoleUI {}
+pub struct ConsoleUI {}
 
 impl UI for ConsoleUI {
     fn display_board(&self, board: &Board) {
